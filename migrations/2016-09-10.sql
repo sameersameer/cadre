@@ -22,14 +22,14 @@ CREATE TABLE `creative` (
 
 CREATE TABLE `device_campaign_mapping` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `device_id` int(11) NOT NULL,
+  `device_id` varchar(32) NOT NULL,
   `campaign_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `driver` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `device_id` int(11) NOT NULL,
+  `device_id` varchar(32) NOT NULL,
   `user_id` int(11) NOT NULL,
   `driver_name` varchar(100) NOT NULL DEFAULT 'John Doe',
   `age` int(11) DEFAULT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE `driver` (
 
 CREATE TABLE `location_info` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `device_id` int(11) NOT NULL,
+  `device_id` varchar(32) NOT NULL,
   `lat` decimal(9,6) NOT NULL,
   `long` decimal(9,6) NOT NULL,
   `time` varchar(20) NOT NULL DEFAULT '',
@@ -51,7 +51,7 @@ CREATE TABLE `location_info` (
 
 CREATE TABLE `severity` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `device_id` int(11) NOT NULL,
+  `device_id` varchar(32) NOT NULL,
   `lat1` decimal(9,6) NOT NULL,
   `long1` decimal(9,6) NOT NULL,
   `lat2` decimal(9,6) NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE `severity` (
 
 CREATE TABLE `stats` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `device_id` int(11) NOT NULL,
+  `device_id` varchar(32) NOT NULL,
   `mileage_d` bigint(20) NOT NULL,
   `mileage_w` bigint(20) NOT NULL,
   `mileage_t` bigint(20) NOT NULL,
