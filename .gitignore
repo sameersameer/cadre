@@ -1,0 +1,25 @@
+*.h2.db
+*h2db.trace.db
+deb
+*.gz
+*.iml
+.idea/
+*.ipr
+*.iws
+*/.classpath
+*/.settings
+*/.project
+.project
+.settings
+.DS_Store
+.metadata/
+# Java compiled files
+*/target/
+*.class
+
+# Built files
+build/*.zip
+*.jar
+docs/deploy
+docs/.hyde_deps
+~
