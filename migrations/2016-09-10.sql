@@ -22,14 +22,15 @@ CREATE TABLE `creative` (
 
 CREATE TABLE `device_campaign_mapping` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `device_id` varchar(32) NOT NULL,
+  `device_id` varchar(32) NOT NULL DEFAULT '',
   `campaign_id` int(11) NOT NULL,
+  `creative_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `driver` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `device_id` varchar(32) NOT NULL,
+  `device_id` varchar(32) NOT NULL DEFAULT '',
   `user_id` int(11) NOT NULL,
   `driver_name` varchar(100) NOT NULL DEFAULT 'John Doe',
   `age` int(11) DEFAULT NULL,
@@ -37,12 +38,13 @@ CREATE TABLE `driver` (
   `contact_number` varchar(30) NOT NULL DEFAULT '',
   `contact_mail` varchar(30) NOT NULL DEFAULT '',
   `vehicle_id` int(11) NOT NULL,
+  `driver_status` enum('REGISTERED','ONBOARDED','ACTIVE','INACTIVE') NOT NULL DEFAULT 'INACTIVE',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `location_info` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `device_id` varchar(32) NOT NULL,
+  `device_id` varchar(32) NOT NULL DEFAULT '',
   `lat` decimal(9,6) NOT NULL,
   `long` decimal(9,6) NOT NULL,
   `time` varchar(20) NOT NULL DEFAULT '',
@@ -51,21 +53,21 @@ CREATE TABLE `location_info` (
 
 CREATE TABLE `severity` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `device_id` varchar(32) NOT NULL,
+  `device_id` varchar(32) NOT NULL DEFAULT '',
   `lat1` decimal(9,6) NOT NULL,
   `long1` decimal(9,6) NOT NULL,
   `lat2` decimal(9,6) NOT NULL,
   `long2` decimal(9,6) NOT NULL,
-  `time1` varchar(20) NOT NULL DEFAULT '',
-  `time2` varchar(20) NOT NULL DEFAULT '',
+  `time1` bigint(20) NOT NULL,
+  `time2` bigint(20) NOT NULL,
   `severity` tinyint(4) NOT NULL,
-  `distance` int(11) NOT NULL,
+  `distance` double NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `stats` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `device_id` varchar(32) NOT NULL,
+  `device_id` varchar(32) NOT NULL DEFAULT '',
   `mileage_d` bigint(20) NOT NULL,
   `mileage_w` bigint(20) NOT NULL,
   `mileage_t` bigint(20) NOT NULL,
