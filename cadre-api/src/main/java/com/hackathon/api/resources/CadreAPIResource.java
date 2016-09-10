@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.api.client.util.DateTime;
 import com.hackathon.api.representations.BasicAPIResponse;
 import com.hackathon.api.representations.GPSInfoRequest;
-import com.hackathon.api.db.GPSInfoDao;
 import lombok.NoArgsConstructor;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
@@ -30,11 +29,9 @@ import java.util.Properties;
 public class CadreAPIResource {
 
     private JerseyClient client;
-    private GPSInfoDao gpsInfoDao;
 
 
-    public CadreAPIResource(JerseyClient client, GPSInfoDao gpsInfoDao) throws Exception {
-        this.gpsInfoDao = gpsInfoDao;
+    public CadreAPIResource(JerseyClient client) throws Exception {
         this.client = client;
     }
 

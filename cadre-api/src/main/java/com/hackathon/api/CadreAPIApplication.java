@@ -1,6 +1,5 @@
 package com.hackathon.api;
 
-import com.hackathon.api.db.GPSInfoDao;
 import com.hackathon.api.resources.CadreAPIResource;
 import io.dropwizard.Application;
 import io.dropwizard.client.JerseyClientBuilder;
@@ -34,9 +33,8 @@ public class CadreAPIApplication extends Application<CadreAPIConfiguration> {
                 .build("jerseyClient");
         final DBIFactory factory = new DBIFactory();
         final DBI jdbi = factory.build(environment, configuration.getDatabaseConfiguration(), "mysql");
-        final GPSInfoDao gpsInfoDao = jdbi.onDemand(GPSInfoDao.class);
 
-        environment.jersey().register(new CadreAPIResource(client, gpsInfoDao));
+        environment.jersey().register(new CadreAPIResource(client));
     }
 
 }
