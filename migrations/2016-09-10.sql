@@ -1,3 +1,6 @@
+DROP DATABASE cadredb;
+CREATE DATABASE cadredb;
+USE cadredb;
 CREATE TABLE `campaign` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `advertiser_id` varchar(32) NOT NULL DEFAULT '',
