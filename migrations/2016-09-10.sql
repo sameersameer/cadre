@@ -1,3 +1,6 @@
+DROP DATABASE cadredb;
+CREATE DATABASE cadredb;
+USE cadredb;
 CREATE TABLE `campaign` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `advertiser_id` varchar(32) NOT NULL DEFAULT '',
@@ -17,6 +20,7 @@ CREATE TABLE `creative` (
   `campaign_id` int(11) NOT NULL,
   `creative_url` text NOT NULL,
   `decal_type` enum('FULL','HALF','PANEL') DEFAULT NULL,
+  `is_primary` TINYINT(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

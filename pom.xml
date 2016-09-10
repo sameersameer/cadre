@@ -15,6 +15,7 @@
     <module>cadre-core</module>
     <module>collector</module>
     <module>cadre-api</module>
+    <module>profiler</module>
   </modules>
 
   <dependencies>
