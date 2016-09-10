@@ -17,6 +17,7 @@ CREATE TABLE `creative` (
   `campaign_id` int(11) NOT NULL,
   `creative_url` text NOT NULL,
   `decal_type` enum('FULL','HALF','PANEL') DEFAULT NULL,
+  `is_primary` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 

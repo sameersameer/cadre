@@ -42,12 +42,7 @@ public class CadreAPIResource {
     @Timed
     @Path("/fetch")
     public Response basicService() throws Exception {
-
-
-        DateTime now = new DateTime(System.currentTimeMillis());
-
         BasicAPIResponse basicAPIResponse = new BasicAPIResponse("Success");
-
         return Response.status(Response.Status.ACCEPTED).entity(basicAPIResponse).build();
     }
 

@@ -18,7 +18,7 @@ public class CadreAPIApplication extends Application<CadreAPIConfiguration> {
 
     @Override
     public String getName() {
-        return "TrackerProxy";
+        return "CadreAPI";
     }
 
     @Override
