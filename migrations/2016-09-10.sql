@@ -1,6 +1,4 @@
-DROP DATABASE cadredb;
-CREATE DATABASE cadredb;
-USE cadredb;
+-- Create syntax for TABLE 'campaign'
 CREATE TABLE `campaign` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `advertiser_id` varchar(32) NOT NULL DEFAULT '',
@@ -12,9 +10,11 @@ CREATE TABLE `campaign` (
   `distance_cap` int(11) NOT NULL DEFAULT '-1',
   `num_of_drivers` int(11) NOT NULL DEFAULT '-1',
   `status` enum('DRAFT','READY','RUNNING','COMPLETE') NOT NULL DEFAULT 'READY',
+  `total_budget` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=12390 DEFAULT CHARSET=utf8;
 
+-- Create syntax for TABLE 'creative'
 CREATE TABLE `creative` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `campaign_id` int(11) NOT NULL,
@@ -24,14 +24,16 @@ CREATE TABLE `creative` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Create syntax for TABLE 'device_campaign_mapping'
 CREATE TABLE `device_campaign_mapping` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `device_id` varchar(32) NOT NULL DEFAULT '',
   `campaign_id` int(11) NOT NULL,
   `creative_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
 
+-- Create syntax for TABLE 'driver'
 CREATE TABLE `driver` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `device_id` varchar(32) NOT NULL DEFAULT '',
@@ -44,8 +46,9 @@ CREATE TABLE `driver` (
   `vehicle_id` int(11) NOT NULL,
   `driver_status` enum('REGISTERED','ONBOARDED','ACTIVE','INACTIVE') NOT NULL DEFAULT 'INACTIVE',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=126 DEFAULT CHARSET=utf8;
 
+-- Create syntax for TABLE 'location_info'
 CREATE TABLE `location_info` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `device_id` varchar(32) NOT NULL DEFAULT '',
@@ -55,6 +58,7 @@ CREATE TABLE `location_info` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Create syntax for TABLE 'severity'
 CREATE TABLE `severity` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `device_id` varchar(32) NOT NULL DEFAULT '',
@@ -69,6 +73,7 @@ CREATE TABLE `severity` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
+-- Create syntax for TABLE 'stats'
 CREATE TABLE `stats` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `device_id` varchar(32) NOT NULL DEFAULT '',
@@ -79,6 +84,5 @@ CREATE TABLE `stats` (
   `earnings_w` bigint(20) NOT NULL,
   `earnings_t` bigint(20) NOT NULL,
   `last_updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `uniq_idx_device_id` (`device_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;

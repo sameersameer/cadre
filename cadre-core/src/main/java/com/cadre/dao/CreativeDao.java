@@ -20,5 +20,9 @@ public interface CreativeDAO {
     @SqlQuery("SELECT * FROM " + tableName + " where id = :id")
     Creative getCreative(@Bind("id") Integer id);
 
+    @Timed
+    @SqlQuery("SELECT * FROM " + tableName + " where campaign_id = :campaignId and decal_type = :decalType")
+    List<Creative> getAllCreativesForCampaignAndDecal(@Bind("campaignId") Integer campaignId, @Bind("decalType") String decalType);
+
 
 }

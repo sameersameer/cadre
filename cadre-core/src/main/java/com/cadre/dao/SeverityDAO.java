@@ -18,7 +18,7 @@ public interface SeverityDAO {
     @SqlQuery("select device_id, sum(distance) from "+tableName+" where time1 > UNIX_TIMESTAMP(CURDATE()) group by 1;")
     Map<String,BigDecimal> getDailyDistance();
 
-    @SqlQuery("select device_id, sum(distance) from "+tableName+" where time1 > UNIX_TIMESTAMP(DATE_ADD(CURDATE(),INTERVAL -(DAYOFWEEK(CURRDATE()))+1 DAY)) group by 1;")
+    @SqlQuery("select device_id, sum(distance) from "+tableName+" where time1 > UNIX_TIMESTAMP(DATE_ADD(CURDATE(),INTERVAL -(DAYOFWEEK(CURDATE()))+1 DAY)) group by 1;")
     Map<String,BigDecimal> getWeeklyDistance();
 
     @SqlQuery("select device_id, sum(distance) from "+tableName+" group by 1;")
@@ -27,12 +27,12 @@ public interface SeverityDAO {
     @SqlQuery("select device_id, sum(distance)*severity*:price from "+tableName+" where time1 > UNIX_TIMESTAMP(CURDATE()) group by 1;")
     Map<String,BigDecimal> getDailyEarnings(@Bind("price")double price);
 
-    @SqlQuery("select device_id, sum(distance)*severity*:price from "+tableName+" where time1 > UNIX_TIMESTAMP(DATE_ADD(CURDATE(),INTERVAL -(DAYOFWEEK(CURRDATE()))+1 DAY)) group by 1;")
+    @SqlQuery("select device_id, sum(distance)*severity*:price from "+tableName+" where time1 > UNIX_TIMESTAMP(DATE_ADD(CURDATE(),INTERVAL -(DAYOFWEEK(CURDATE()))+1 DAY)) group by 1;")
     Map<String,BigDecimal> getWeeklyEarning(@Bind("price")double price);
 
     @SqlQuery("select device_id, sum(distance)*severity*:price from "+tableName+" group by 1;")
     Map<String,BigDecimal> getTotalEarning(@Bind("price")double price);
 
-    @SqlQuery("select UNIX_TIMESTAMP(max(last_updated_at)) from "+tableName)
+    @SqlQuery("select UNIX_TIMESTAMP(max(time1)) from "+tableName)
     Long getLastUpdated();
 }

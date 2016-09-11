@@ -43,5 +43,5 @@ public interface StatsDAO {
             "  earnings_w = VALUES(earning_w),\n" +
             "  earnings_t = VALUES(earning_t),\n" +
             "  last_updated_at = VALUES(last_updated_at);")
-    int insertOrUpdate(@BindBean("deviceStat") Iterable<Stats> deviceStat);
+    void insertOrUpdate(@BindBean("deviceStat") Iterable<Stats> deviceStat);
 }

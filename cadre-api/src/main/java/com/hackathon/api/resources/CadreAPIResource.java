@@ -1,10 +1,7 @@
 package com.hackathon.api.resources;
 
 import com.cadre.dao.*;
-import com.cadre.entities.Campaign;
-import com.cadre.entities.Driver;
-import com.cadre.entities.GenericStats;
-import com.cadre.entities.Stats;
+import com.cadre.entities.*;
 import com.codahale.metrics.annotation.Timed;
 import com.hackathon.api.representations.*;
 import lombok.AllArgsConstructor;
@@ -18,7 +15,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -83,7 +82,7 @@ public class CadreAPIResource {
     @GET
     @Timed
     @Path("/driver/{driverId}")
-    public Response getBrandInfo(@PathParam("driverId") Integer driverId) throws Exception {
+    public Response checkDriver(@PathParam("driverId") Integer driverId) throws Exception {
         if(driverId == null){
             return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse("driverId should not be empty")).build();
         }
@@ -95,7 +94,7 @@ public class CadreAPIResource {
     @GET
     @Timed
     @Path("/driver/{driverId}/{campaignId}")
-    public Response getBrandInfo(@PathParam("driverId") Integer driverId,
+    public Response getDriverCampaignInfo(@PathParam("driverId") Integer driverId,
                                  @PathParam("campaignId") Integer campaignId) throws Exception {
         Integer verifyCampaignId = driverDao.getActiveCampaignIdForDriver(driverId);
         Campaign campaign = campaignDao.getCampaign(campaignId);
@@ -108,21 +107,31 @@ public class CadreAPIResource {
         return Response.status(Response.Status.OK).entity(driverInfoForCampaignResponse).build();
     }
 
-    /*@GET
+    @GET
     @Timed
-    @Path("/driver/{driverId}/fetch")
-    public Response getBrandInfo(@PathParam("driverId") Integer driverId,
-                                 @PathParam("campaignId") Integer campaignId) throws Exception {
+    @Path("/driver/{driverId}/campaign")
+    public Response getCampaignListInfo(@PathParam("driverId") Integer driverId) throws Exception {
         Integer verifyCampaignId = driverDao.getActiveCampaignIdForDriver(driverId);
-        Campaign campaign = campaignDao.getCampaign(campaignId);
-        if(campaign == null || verifyCampaignId == null || (!campaignId.equals(verifyCampaignId))){
-            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse("No Such Campaign For this Driver")).build();
+        if(verifyCampaignId != null){
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse("Already campaign there for this driver")).build();
         }
-        Driver driver = driverDao.getDriver(driverId);
-        GenericStats genericStats = statsDAO.getGenericStatsForDevice(driver.getDeviceId());
-        DriverInfoForCampaignResponse driverInfoForCampaignResponse = new DriverInfoForCampaignResponse(campaign,driver,genericStats);
-        return Response.status(Response.Status.OK).entity(driverInfoForCampaignResponse).build();
-    }*/
+        List<Campaign> campaigns = campaignDao.getAllCampaigns();
+        CampaignFullInfoResponse campaignFullInfoResponse = new CampaignFullInfoResponse();
+        List<CampaignFullInfoResponse.CampaignInfo> campaignInfos = new ArrayList<>();
+        for(Campaign campaign: campaigns){
+            CampaignFullInfoResponse.CampaignInfo campaignInfo = new CampaignFullInfoResponse.CampaignInfo();
+            Map<String, List<Creative>> map = new HashMap<>();
+            for(DecalType decalType : DecalType.values()){
+                List<Creative> creatives = creativeDao.getAllCreativesForCampaignAndDecal(campaign.getId(),decalType.getName());
+                map.put(decalType.getName(),creatives);
+            }
+            campaignInfo.setCampaign(campaign);
+            campaignInfo.setType(map);
+            campaignInfos.add(campaignInfo);
+        }
+        campaignFullInfoResponse.setCampaigns(campaignInfos);
+        return Response.status(Response.Status.OK).entity(campaignFullInfoResponse).build();
+    }
 
 
 
