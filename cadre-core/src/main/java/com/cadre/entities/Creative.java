@@ -18,7 +18,7 @@ public class Creative {
     Integer campaignId;
     String creativeUrl;
     DecalType decalType;
-    Boolean isPrimary;
+    Integer isPrimary;
 
     public static class CreativeInfoMapper implements ResultSetMapper<Creative> {
         @Override
@@ -28,7 +28,7 @@ public class Creative {
                     resultSet.getInt("campaign_id"),
                     resultSet.getString("creative_url"),
                     DecalType.getDecalType(resultSet.getString("decal_type")),
-                    resultSet.getBoolean(resultSet.getInt("is_primary"))
+                    resultSet.getInt("is_primary")
             );
         }
     }

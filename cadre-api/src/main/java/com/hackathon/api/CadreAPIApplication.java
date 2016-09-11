@@ -1,6 +1,9 @@
 package com.hackathon.api;
 
 import com.hackathon.api.resources.CadreAPIResource;
+
+import com.cadre.dao.*;
+import com.hackathon.api.resources.CadreAPIResource;
 import io.dropwizard.Application;
 import io.dropwizard.client.JerseyClientBuilder;
 import io.dropwizard.jdbi.DBIFactory;
@@ -33,8 +36,13 @@ public class CadreAPIApplication extends Application<CadreAPIConfiguration> {
                 .build("jerseyClient");
         final DBIFactory factory = new DBIFactory();
         final DBI jdbi = factory.build(environment, configuration.getDatabaseConfiguration(), "mysql");
+        final CampaignDAO campaignDao = jdbi.onDemand(CampaignDAO.class);
+        final CreativeDAO creativeDao = jdbi.onDemand(CreativeDAO.class);
+        final SeverityDAO severityDAO = jdbi.onDemand(SeverityDAO.class);
+        final StatsDAO statsDAO = jdbi.onDemand(StatsDAO.class);
+        final DriverDAO driverDao = jdbi.onDemand(DriverDAO.class);
 
-        environment.jersey().register(new CadreAPIResource(client));
+        environment.jersey().register(new CadreAPIResource(client, campaignDao, creativeDao, severityDAO, statsDAO, driverDao));
     }
 
 }
