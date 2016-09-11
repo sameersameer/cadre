@@ -45,10 +45,11 @@ CREATE TABLE `driver` (
 CREATE TABLE `location_info` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `device_id` varchar(32) NOT NULL DEFAULT '',
-  `lat` decimal(9,6) NOT NULL,
-  `long` decimal(9,6) NOT NULL,
-  `time` varchar(20) NOT NULL DEFAULT '',
-  PRIMARY KEY (`id`)
+  `latitude` decimal(9,6) NOT NULL,
+  `longitude` decimal(9,6) NOT NULL,
+  `timestamp` varchar(20) NOT NULL DEFAULT '',
+  PRIMARY KEY (
+  `id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE `severity` (

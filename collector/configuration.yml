@@ -64,3 +64,16 @@ server:
   adminConnectors:
   - type: http
     port: 10011
+
+clientConfiguration:
+    timeout: 20000ms
+    connectionTimeout: 20000ms
+    timeToLive: 1 hour
+    cookiesEnabled: true
+    maxConnections: 1024
+    maxConnectionsPerRoute: 1024
+    keepAlive: 0s
+    minThreads: 1
+    maxThreads: 128
+    gzipEnabled: false
+    gzipEnabledForRequests: false

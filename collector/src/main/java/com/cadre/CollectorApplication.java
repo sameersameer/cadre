@@ -20,7 +20,7 @@ public class CollectorApplication extends Application<CollectorConfiguration>{
   }
 
   @Override
-  public void run(CollectorConfiguration configuration, Environment environment) throws Exception {
+  public void run(final CollectorConfiguration configuration,final Environment environment) throws Exception {
     CollectorManager collectorManager = new CollectorManager();
     environment.lifecycle().manage(collectorManager);
   }

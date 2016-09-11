@@ -26,14 +26,15 @@ public class CollectorManager implements Managed {
 
   @Override
   public void start() throws Exception {
-    manager.submit(()->{
+    manager.submit(() -> {
       try {
-        collector.run();
-      } catch (Exception e){
-        log.error("Exception starting Orchestrator",e);
-        throw new RuntimeException(e);
-      }
-    });
+      collector = new Collector();
+      collector.run();
+    } catch (Exception e){
+      log.error("Exception starting Orchestrator",e);
+      throw new RuntimeException(e);
+    }
+  });
   }
 
   @Override
