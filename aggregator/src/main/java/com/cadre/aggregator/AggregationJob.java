@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 public class AggregationJob {
 
     DBI dbi;
+    double pricePerMeter = 0.1;
 
     public AggregationJob(){
         this.dbi = getDbi();
@@ -31,9 +32,9 @@ public class AggregationJob {
         Map<String,BigDecimal> weeklyDistance = getMapFromMapEntries(severityDAO.getWeeklyDistance());
         Map<String,BigDecimal> totalDistance = getMapFromMapEntries(severityDAO.getTotalDistance());
 
-        Map<String,BigDecimal> dailyEarning = getMapFromMapEntries(severityDAO.getDailyEarnings(1));
-        Map<String,BigDecimal> weeklyEarning = getMapFromMapEntries(severityDAO.getWeeklyEarning(1));
-        Map<String,BigDecimal> totalEarning = getMapFromMapEntries(severityDAO.getTotalEarning(1));
+        Map<String,BigDecimal> dailyEarning = getMapFromMapEntries(severityDAO.getDailyEarnings(pricePerMeter));
+        Map<String,BigDecimal> weeklyEarning = getMapFromMapEntries(severityDAO.getWeeklyEarning(pricePerMeter));
+        Map<String,BigDecimal> totalEarning = getMapFromMapEntries(severityDAO.getTotalEarning(pricePerMeter));
 
         DateTime lastUpdatedAt = new DateTime(severityDAO.getLastUpdated(), DateTimeZone.forOffsetHoursMinutes(5,30));
 
