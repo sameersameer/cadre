@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 public class AggregationJob {
 
     DBI dbi;
-    double pricePerMeter = 0.1;
+    double pricePerMeter = 0.01;
 
     public AggregationJob(){
         this.dbi = getDbi();
