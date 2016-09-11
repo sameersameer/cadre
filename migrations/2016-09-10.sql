@@ -1,3 +1,6 @@
+DROP DATABASE cadredb;
+CREATE DATABASE cadredb;
+USE cadredb;
 CREATE TABLE `campaign` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `advertiser_id` varchar(32) NOT NULL DEFAULT '',
@@ -17,6 +20,7 @@ CREATE TABLE `creative` (
   `campaign_id` int(11) NOT NULL,
   `creative_url` text NOT NULL,
   `decal_type` enum('FULL','HALF','PANEL') DEFAULT NULL,
+  `is_primary` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -75,6 +79,7 @@ CREATE TABLE `stats` (
   `earnings_d` bigint(20) NOT NULL,
   `earnings_w` bigint(20) NOT NULL,
   `earnings_t` bigint(20) NOT NULL,
-  `last_udpated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  `last_updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_idx_device_id` (`device_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
