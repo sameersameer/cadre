@@ -1,6 +1,7 @@
 package com.cadre.entities;
 
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import org.joda.time.DateTime;
 import org.skife.jdbi.v2.StatementContext;
 import org.skife.jdbi.v2.tweak.ResultSetMapper;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
  * Created by purushotham.m on 11/09/16.
  */
 @AllArgsConstructor
+@Data
 public class Stats {
     String deviceId;
     BigDecimal dayMileage;
@@ -21,7 +23,7 @@ public class Stats {
     BigDecimal dayEarning;
     BigDecimal weekEarning;
     BigDecimal totalEarning;
-    DateTime lastUpdateAt;
+    DateTime lastUpdatedAt;
 
     public static class StatsMapper implements ResultSetMapper<Stats> {
         @Override

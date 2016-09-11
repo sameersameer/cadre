@@ -9,6 +9,7 @@ import com.cadre.entities.Stats;
 
 import javax.print.attribute.standard.Severity;
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,27 +27,42 @@ public class AggregationJob {
 
     public List<Stats> getDeviceStat(){
         SeverityDAO severityDAO = dbi.onDemand(SeverityDAO.class);
-        Map<String,BigDecimal> dailyDistance = severityDAO.getDailyDistance();
-        Map<String,BigDecimal> weeklyDistance = severityDAO.getWeeklyDistance();
-        Map<String,BigDecimal> totalDistance = severityDAO.getTotalDistance();
+        Map<String,BigDecimal> dailyDistance = getMapFromMapEntries(severityDAO.getDailyDistance());
+        Map<String,BigDecimal> weeklyDistance = getMapFromMapEntries(severityDAO.getWeeklyDistance());
+        Map<String,BigDecimal> totalDistance = getMapFromMapEntries(severityDAO.getTotalDistance());
 
-        Map<String,BigDecimal> dailyEarning = severityDAO.getDailyEarnings(1);
-        Map<String,BigDecimal> weeklyEarning = severityDAO.getWeeklyEarning(1);
-        Map<String,BigDecimal> totalEarning = severityDAO.getTotalEarning(1);
+        Map<String,BigDecimal> dailyEarning = getMapFromMapEntries(severityDAO.getDailyEarnings(1));
+        Map<String,BigDecimal> weeklyEarning = getMapFromMapEntries(severityDAO.getWeeklyEarning(1));
+        Map<String,BigDecimal> totalEarning = getMapFromMapEntries(severityDAO.getTotalEarning(1));
 
         DateTime lastUpdatedAt = new DateTime(severityDAO.getLastUpdated(), DateTimeZone.forOffsetHoursMinutes(5,30));
 
         List<Stats> stats = totalDistance.keySet().stream().map( k ->
-                new Stats(k, dailyDistance.get(k), weeklyDistance.get(k), totalDistance.get(k),
-                        dailyEarning.get(k), weeklyEarning.get(k), totalEarning.get(k),lastUpdatedAt)
+                new Stats(k, dailyDistance.containsKey(k) ? dailyDistance.get(k):BigDecimal.ZERO,
+                        weeklyDistance.containsKey(k) ? weeklyDistance.get(k):BigDecimal.ZERO,
+                        totalDistance.containsKey(k) ? totalDistance.get(k):BigDecimal.ZERO,
+                        dailyEarning.containsKey(k) ? dailyEarning.get(k):BigDecimal.ZERO,
+                        weeklyEarning.containsKey(k) ? weeklyEarning.get(k):BigDecimal.ZERO,
+                        totalEarning.containsKey(k) ? totalEarning.get(k):BigDecimal.ZERO,
+                        lastUpdatedAt)
         ).collect(Collectors.toList());
 
         return stats;
     }
 
-    public void updateStats(Iterable<Stats> stats){
+    private Map<String,BigDecimal> getMapFromMapEntries(List<Map.Entry<String,BigDecimal>> entries){
+        HashMap<String,BigDecimal> map = new HashMap<>();
+        entries.forEach(e -> map.put(e.getKey(), e.getValue()==null? BigDecimal.ZERO :e.getValue()));
+        return map;
+    }
+
+    public void updateStats(List<Stats> stats){
         StatsDAO statsDAO = dbi.onDemand(StatsDAO.class);
-        statsDAO.insertOrUpdate(stats);
+        stats.forEach(s->{
+            statsDAO.insertOrUpdate(s);
+            }
+        );
+
     }
 
     public static DBI getDbi(){
@@ -58,7 +74,7 @@ public class AggregationJob {
         }
         String url = "jdbc:mysql://127.0.0.1:3306/cadredb";
         String user = "root";
-        String password = "";
+        String password = "password";
         DBI jdbi = new DBI(url, user, password);
         return jdbi;
     }
