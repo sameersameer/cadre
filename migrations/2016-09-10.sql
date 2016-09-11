@@ -78,6 +78,7 @@ CREATE TABLE `stats` (
   `earnings_d` bigint(20) NOT NULL,
   `earnings_w` bigint(20) NOT NULL,
   `earnings_t` bigint(20) NOT NULL,
-  `last_udpated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`)
+  `last_updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uniq_idx_device_id` (`device_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
