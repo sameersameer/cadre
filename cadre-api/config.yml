@@ -45,8 +45,8 @@ logging:
     threshold: ALL
     timeZone: IST
     archive: true
-    archivedLogFilenamePattern: /var/log/hackathon/trackerproxy-api/root-%d.log.gz
-    currentLogFilename: /var/log/hackathon/trackerproxy-api/root.log
+    archivedLogFilenamePattern: /var/log/hackathon/cadre-api/root-%d.log.gz
+    currentLogFilename: /var/log/hacka-api/root.log
 
 databaseConfiguration:
   # the name of your JDBC driver
@@ -56,7 +56,7 @@ databaseConfiguration:
     # the password
   password:
   # the JDBC URL
-  url: jdbc:mysql://localhost:3306/bumblebee
+  url: jdbc:mysql://localhost:3306/cadredb
   # any properties specific to your JDBC driver:
   properties:
     charSet: UTF-8

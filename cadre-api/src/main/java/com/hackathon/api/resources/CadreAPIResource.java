@@ -1,75 +1,132 @@
 package com.hackathon.api.resources;
 
+import com.cadre.dao.*;
+import com.cadre.entities.Campaign;
+import com.cadre.entities.Driver;
+import com.cadre.entities.GenericStats;
+import com.cadre.entities.Stats;
 import com.codahale.metrics.annotation.Timed;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.api.client.util.DateTime;
-import com.hackathon.api.representations.BasicAPIResponse;
-import com.hackathon.api.representations.GPSInfoRequest;
-import com.hackathon.api.db.GPSInfoDao;
+import com.hackathon.api.representations.*;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import org.apache.kafka.clients.producer.KafkaProducer;
-import org.apache.kafka.clients.producer.Producer;
-import org.apache.kafka.clients.producer.ProducerRecord;
 import org.glassfish.jersey.client.JerseyClient;
 
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.Properties;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * Created by juyal.shashank on 22/07/16.
  */
 @NoArgsConstructor
+@AllArgsConstructor
 @Path("/v1")
 @Produces(MediaType.APPLICATION_JSON)
 public class CadreAPIResource {
 
     private JerseyClient client;
-    private GPSInfoDao gpsInfoDao;
+    private CampaignDAO campaignDao;
+    private CreativeDAO creativeDao;
+    private SeverityDAO severityDAO;
+    private StatsDAO statsDAO;
+    private DriverDAO driverDao;
 
-
-    public CadreAPIResource(JerseyClient client, GPSInfoDao gpsInfoDao) throws Exception {
-        this.gpsInfoDao = gpsInfoDao;
-        this.client = client;
-    }
 
     @GET
     @Timed
-    @Path("/fetch")
+    @Path("/check")
     public Response basicService() throws Exception {
         BasicAPIResponse basicAPIResponse = new BasicAPIResponse("Success");
         return Response.status(Response.Status.ACCEPTED).entity(basicAPIResponse).build();
     }
 
-    @POST
+    @GET
     @Timed
-    @Path("/track")
-    public Response track(GPSInfoRequest gpsInfoRequest) throws Exception {
-        Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
-        props.put("acks", "all");
-        props.put("retries", 0);
-        props.put("batch.size", 16384);
-        props.put("linger.ms", 1);
-        props.put("buffer.memory", 33554432);
-        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-
-        Producer<String, String> producer = new KafkaProducer<String, String>(props);
-        ObjectMapper objectMapper = new ObjectMapper();
-        if(gpsInfoRequest != null && gpsInfoRequest.getGpsDataList().size()!=0){
-            producer.send(new ProducerRecord<String, String>("test", gpsInfoRequest.getGpsDataList().get(0).getDeviceId(),objectMapper.writeValueAsString(gpsInfoRequest)));
+    @Path("/brands/{advertiserId}")
+    public Response getBrandInfo(@PathParam("advertiserId") String advertiserId) throws Exception {
+        if(advertiserId == null){
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse("AdvertiserId should not be empty")).build();
         }
+        List<Campaign> campaigns = campaignDao.getCampaignsForAdvertiser(advertiserId);
+        BrandFullInfoResponse brandFullInfoResponse = new BrandFullInfoResponse();
+        List<BrandFullInfoResponse.CampaignInfo> campaignInfos = new ArrayList<>();
+        for(Campaign campaign: campaigns){
+            BrandFullInfoResponse.CampaignInfo campaignInfo = new BrandFullInfoResponse.CampaignInfo();
+            List<BrandFullInfoResponse.CampaignInfo.DriverInfo> driverInfoList = new ArrayList<>();
 
-        producer.close();
-        System.out.println(gpsInfoRequest.toString());
-        return Response.status(Response.Status.OK).entity(new BasicAPIResponse("Success")).build();
+            List<Driver> drivers = driverDao.getDriversForCampaign(campaign.getId());
+            for(Driver driver: drivers){
+                BrandFullInfoResponse.CampaignInfo.DriverInfo driverInfo = new BrandFullInfoResponse.CampaignInfo.DriverInfo();
+                GenericStats driverStats = statsDAO.getGenericStatsForDevice(driver.getDeviceId());
+                driverInfo.setDriver(driver);
+                driverInfo.setDriverStats(driverStats);
+                driverInfoList.add(driverInfo);
+            }
+
+            GenericStats campaignStats = statsDAO.getGenericStatsForCampaigns(campaign.getId());
+            campaignInfo.setCampaign(campaign);
+            campaignInfo.setCampaignStats(campaignStats);
+            campaignInfo.setDrivers(driverInfoList);
+            campaignInfos.add(campaignInfo);
+        }
+        brandFullInfoResponse.setCampaigns(campaignInfos);
+        return Response.status(Response.Status.OK).entity(brandFullInfoResponse).build();
     }
+
+
+    @GET
+    @Timed
+    @Path("/driver/{driverId}")
+    public Response getBrandInfo(@PathParam("driverId") Integer driverId) throws Exception {
+        if(driverId == null){
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse("driverId should not be empty")).build();
+        }
+        Integer campaignId = driverDao.getActiveCampaignIdForDriver(driverId);
+        CheckDriverResponse checkDriverResponse = new CheckDriverResponse(campaignId);
+        return Response.status(Response.Status.OK).entity(checkDriverResponse).build();
+    }
+
+    @GET
+    @Timed
+    @Path("/driver/{driverId}/{campaignId}")
+    public Response getBrandInfo(@PathParam("driverId") Integer driverId,
+                                 @PathParam("campaignId") Integer campaignId) throws Exception {
+        Integer verifyCampaignId = driverDao.getActiveCampaignIdForDriver(driverId);
+        Campaign campaign = campaignDao.getCampaign(campaignId);
+        if(campaign == null || verifyCampaignId == null || (!campaignId.equals(verifyCampaignId))){
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse("No Such Campaign For this Driver")).build();
+        }
+        Driver driver = driverDao.getDriver(driverId);
+        GenericStats genericStats = statsDAO.getGenericStatsForDevice(driver.getDeviceId());
+        DriverInfoForCampaignResponse driverInfoForCampaignResponse = new DriverInfoForCampaignResponse(campaign,driver,genericStats);
+        return Response.status(Response.Status.OK).entity(driverInfoForCampaignResponse).build();
+    }
+
+    /*@GET
+    @Timed
+    @Path("/driver/{driverId}/fetch")
+    public Response getBrandInfo(@PathParam("driverId") Integer driverId,
+                                 @PathParam("campaignId") Integer campaignId) throws Exception {
+        Integer verifyCampaignId = driverDao.getActiveCampaignIdForDriver(driverId);
+        Campaign campaign = campaignDao.getCampaign(campaignId);
+        if(campaign == null || verifyCampaignId == null || (!campaignId.equals(verifyCampaignId))){
+            return Response.status(Response.Status.BAD_REQUEST).entity(new ErrorResponse("No Such Campaign For this Driver")).build();
+        }
+        Driver driver = driverDao.getDriver(driverId);
+        GenericStats genericStats = statsDAO.getGenericStatsForDevice(driver.getDeviceId());
+        DriverInfoForCampaignResponse driverInfoForCampaignResponse = new DriverInfoForCampaignResponse(campaign,driver,genericStats);
+        return Response.status(Response.Status.OK).entity(driverInfoForCampaignResponse).build();
+    }*/
+
+
+
+
 
 
 }

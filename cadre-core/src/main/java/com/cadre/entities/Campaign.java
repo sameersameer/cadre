@@ -23,6 +23,7 @@ public class Campaign {
     private Integer distanceCap;
     private Integer NumOfDrivers;
     private CampaignStatus status;
+    private Double totalBudget;
 
     public static class CampaignInfoMapper implements ResultSetMapper<Campaign> {
         @Override
@@ -38,7 +39,8 @@ public class Campaign {
                     startDate, endDate,
                     resultSet.getInt("distance_cap"),
                     resultSet.getInt("num_of_drivers"),
-                    CampaignStatus.getCampaignStatus(resultSet.getString("status"))
+                    CampaignStatus.getCampaignStatus(resultSet.getString("status")),
+                    resultSet.getDouble("total_budget")
             );
         }
     }
