@@ -29,13 +29,13 @@ public interface SeverityDAO {
     @SqlQuery("select device_id, sum(distance) from "+tableName+" group by 1;")
     List<Map.Entry<String,BigDecimal>> getTotalDistance();
 
-    @SqlQuery("select device_id, sum(severity)*:price from "+tableName+" where time1 > UNIX_TIMESTAMP(CURDATE()) group by 1;")
+    @SqlQuery("select device_id, sum(severity*(CASE distance WHEN 0 THEN 100 ELSE distance END))*:price from "+tableName+" where time1 > UNIX_TIMESTAMP(CURDATE()) group by 1;")
     List<Map.Entry<String,BigDecimal>> getDailyEarnings(@Bind("price")double price);
 
-    @SqlQuery("select device_id, sum(severity)*:price from "+tableName+" where time1 > UNIX_TIMESTAMP(DATE_ADD(CURDATE(),INTERVAL -(DAYOFWEEK(CURDATE()))+1 DAY)) group by 1;")
+    @SqlQuery("select device_id, sum(severity*(CASE distance WHEN 0 THEN 100 ELSE distance END))*:price from "+tableName+" where time1 > UNIX_TIMESTAMP(DATE_ADD(CURDATE(),INTERVAL -(DAYOFWEEK(CURDATE()))+1 DAY)) group by 1;")
     List<Map.Entry<String,BigDecimal>> getWeeklyEarning(@Bind("price")double price);
 
-    @SqlQuery("select device_id, sum(severity)*:price from "+tableName+" group by 1;")
+    @SqlQuery("select device_id, sum(severity*(CASE distance WHEN 0 THEN 100 ELSE distance END))*:price from "+tableName+" group by 1;")
     List<Map.Entry<String,BigDecimal>> getTotalEarning(@Bind("price")double price);
 
     @SqlQuery("select UNIX_TIMESTAMP(max(time1)) from "+tableName)
