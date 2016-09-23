@@ -40,7 +40,7 @@ public class DataFetcher {
     props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     consumer = Consumer.createJavaConsumerConnector(new ConsumerConfig(props));
-    this.topic = "cadre";
+    this.topic = "test";
     locationDAO = createDBI().onDemand(LocationDAO.class);
 
   }
